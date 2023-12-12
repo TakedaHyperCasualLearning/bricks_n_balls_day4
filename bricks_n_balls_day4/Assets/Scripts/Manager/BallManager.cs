@@ -15,7 +15,7 @@ public class BallManager : MonoBehaviour
     private float shotTimer = 0.0f;
     private float SHOT_INTERVAL = 0.2f;
     private int shotCount = 0;
-    private Vector2 firstPosition = new Vector2(0.0f, -4.05f);
+    private Vector2 firstPosition = new Vector2(0.0f, -4.5f);
 
     public void Initialize()
     {
