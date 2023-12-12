@@ -9,6 +9,7 @@ public class Main : MonoBehaviour
     [SerializeField] private DottedLineManager dottedLineManager;
     private CollisionManager collisionManager = new CollisionManager();
     private LauncherManager launcherManager = new LauncherManager();
+    private StageManager stageManager = new StageManager();
 
     // Start is called before the first frame update
     void Start()
@@ -16,6 +17,7 @@ public class Main : MonoBehaviour
         ballManager.Initialize();
         blockManager.Initialize();
         dottedLineManager.Initialize();
+        stageManager.Initialize(blockManager.CreateBlock);
     }
 
     // Update is called once per frame
@@ -25,5 +27,6 @@ public class Main : MonoBehaviour
         blockManager.OnUpdate();
         launcherManager.OnUpdate(ballManager.ShotAllBall, dottedLineManager.DrawDottedLine, collisionManager.CheckHitEdge, ballManager.IsShot, dottedLineManager.AllClearDottedLine);
         dottedLineManager.OnUpdate(ballManager.IsShot, ballManager.GetFirstPosition);
+        stageManager.OnUpdate(blockManager.IsAllBlockBreak, ballManager.IsShot);
     }
 }

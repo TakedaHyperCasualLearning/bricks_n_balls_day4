@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using System;
+using TMPro;
 
 public class BallManager : MonoBehaviour
 {
     [SerializeField] private GameObject ballPrefab;
     [SerializeField] private GameObject ballRoot;
+    [SerializeField] private TextMeshProUGUI ballCountText;
     private List<BallData> ballDataList = new List<BallData>();
     private int possessionNumber = 80;
-    private float SHOT_SPEED = 0.08f;
+    private float SHOT_SPEED = 0.05f;
     private float GATHER_SPEED = 0.1f;
     private bool isShot = false;
     private float shotTimer = 0.0f;
@@ -19,6 +21,7 @@ public class BallManager : MonoBehaviour
     private int stopCount = 0;
     private int gatherCount = 0;
     private Vector2 firstPosition = new Vector2(0.0f, -4.5f);
+    private float COUNT_TEXT_OFFSET = 0.25f;
     private float STOP_POSITION_OFFSET = 0.1f;
     private Func<Vector2, float, Vector2, Vector2> edgeCollisionFunction;
     private Func<Vector2, float, Vector2, Vector2, Vector2> boxCollisionFunction;
@@ -27,7 +30,10 @@ public class BallManager : MonoBehaviour
 
     public void Initialize()
     {
-
+        ballCountText.text = "×" + possessionNumber.ToString();
+        ballCountText.transform.position = new Vector2(firstPosition.x, firstPosition.y + COUNT_TEXT_OFFSET);
+        BallData ballData = CreateBall();
+        ballData.BallObject.SetActive(true);
     }
 
     public void OnUpdate(
@@ -165,6 +171,8 @@ public class BallManager : MonoBehaviour
         ballData.IsMoving = false;
         ballData.GatherTimer = 0.0f;
         stopCount++;
+        ballCountText.text = "×" + stopCount.ToString();
+        ballCountText.transform.position = new Vector2(firstPosition.x, firstPosition.y + COUNT_TEXT_OFFSET);
         if (stopCount == shotCount)
         {
             isShot = false;
