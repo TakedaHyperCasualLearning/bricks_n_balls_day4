@@ -16,7 +16,7 @@ public class BlockManager : MonoBehaviour
         for (int i = 0; i < blockNumber; i++)
         {
             BlockData block = CreateBlock();
-            block.BlockObject.transform.position = new Vector2(i * 1.0f, 0.0f);
+            block.BlockObject.transform.position = new Vector2(i * 1.0f - 2.0f, 0.0f);
             block.DurabilityText.transform.position = block.BlockObject.transform.position;
         }
     }
@@ -24,6 +24,18 @@ public class BlockManager : MonoBehaviour
     public void OnUpdate()
     {
 
+    }
+
+    public void OnHitBlock(BlockData blockData)
+    {
+        blockData.Durability--;
+        blockData.DurabilityText.text = blockData.Durability.ToString();
+        if (blockData.Durability <= 0)
+        {
+            blockData.IsBreak = true;
+            blockData.BlockObject.SetActive(false);
+            blockData.DurabilityText.gameObject.SetActive(false);
+        }
     }
 
     public BlockData CreateBlock()
@@ -39,10 +51,16 @@ public class BlockManager : MonoBehaviour
             BlockObject = blockObject,
             DurabilityText = durabilityText,
             Size = blockObject.transform.localScale / 2,
-            Durability = 1,
+            Durability = 10,
             IsBreak = false
         };
+        durabilityText.text = blockData.Durability.ToString();
         blockDataList.Add(blockData);
         return blockData;
+    }
+
+    public List<BlockData> GetBlockDataList()
+    {
+        return blockDataList;
     }
 }
