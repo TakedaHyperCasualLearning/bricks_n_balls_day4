@@ -16,6 +16,8 @@ public class DottedLineManager : MonoBehaviour
     private float DOT_POINT_INTERVAL = 0.2f;
     private int REFLECTION_COUNT = 6;
     private Vector2 startingPosition = new Vector2(0.0f, -4.5f);
+    private Func<Vector2> GetBallRootPosition;
+    private Func<bool> GetIsShotFunction;
 
     public void Initialize()
     {
@@ -27,6 +29,14 @@ public class DottedLineManager : MonoBehaviour
         impactPointMarker.PointMarkerObject.GetComponent<SpriteRenderer>().sortingOrder = 1;
         impactPointMarker.PointMarkerObject.transform.SetParent(impactPointMarkerRoot.transform);
         impactPointMarker.PointMarkerObject.SetActive(false);
+    }
+
+    public void OnUpdate(Func<bool> getShot, Func<Vector2> getPos)
+    {
+        GetBallRootPosition = getPos;
+        GetIsShotFunction = getShot;
+        if (GetIsShotFunction.Invoke()) return;
+        startingPosition = GetBallRootPosition.Invoke();
     }
 
     public Vector2 DrawDottedLine(Func<Vector2, float, Vector2, Vector2> IsOutScreen)
@@ -119,4 +129,6 @@ public class DottedLineManager : MonoBehaviour
         }
         impactPointMarker.PointMarkerObject.SetActive(false);
     }
+
+    public void SetStartingPosition(Vector2 position) { startingPosition = position; }
 }

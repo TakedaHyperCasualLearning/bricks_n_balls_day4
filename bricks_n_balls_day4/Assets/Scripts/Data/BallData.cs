@@ -10,6 +10,8 @@ public class BallData : MonoBehaviour
     private float radius;
     private float speed;
     private bool isGather;
+    private float gatherTimer = 0.0f;
+    private Vector2 stopPosition = Vector2.zero;
 
 
     public GameObject BallObject { get => ballObject; set => ballObject = value; }
@@ -18,4 +20,6 @@ public class BallData : MonoBehaviour
     public float Radius { get => radius; set => radius = value; }
     public float Speed { get => speed; set => speed = value; }
     public bool IsGather { get => isGather; set => isGather = value; }
+    public float GatherTimer { get => gatherTimer; set => gatherTimer = value; }
+    public Vector2 StopPosition { get => stopPosition; set => stopPosition = value; }
 }

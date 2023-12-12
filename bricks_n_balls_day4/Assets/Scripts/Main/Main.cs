@@ -8,6 +8,7 @@ public class Main : MonoBehaviour
     [SerializeField] private BlockManager blockManager;
     [SerializeField] private DottedLineManager dottedLineManager;
     private CollisionManager collisionManager = new CollisionManager();
+    private LauncherManager launcherManager = new LauncherManager();
 
     // Start is called before the first frame update
     void Start()
@@ -20,11 +21,9 @@ public class Main : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ballManager.OnUpdate();
+        ballManager.OnUpdate(collisionManager.CheckHitEdge, collisionManager.CircleToBox, blockManager.OnHitBlock, blockManager.GetBlockDataList);
         blockManager.OnUpdate();
-
-        dottedLineManager.DrawDottedLine(collisionManager.CheckHitEdge);
-
-        ballManager.OnHitCollision(collisionManager.CheckHitEdge, collisionManager.CircleToBox, blockManager.OnHitBlock, blockManager.GetBlockDataList);
+        launcherManager.OnUpdate(ballManager.ShotAllBall, dottedLineManager.DrawDottedLine, collisionManager.CheckHitEdge, ballManager.IsShot, dottedLineManager.AllClearDottedLine);
+        dottedLineManager.OnUpdate(ballManager.IsShot, ballManager.GetFirstPosition);
     }
 }
