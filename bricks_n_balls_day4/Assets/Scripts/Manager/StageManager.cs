@@ -34,6 +34,7 @@ public class StageManager
 
     public void GenerateStage()
     {
+        stage.Clear();
         for (int i = 0; i < STAGE_HEIGHT; i++)
         {
             stage.Add(new List<bool>());
