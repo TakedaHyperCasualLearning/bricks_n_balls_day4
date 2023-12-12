@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using System;
 
 public class BallManager : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class BallManager : MonoBehaviour
     private float shotTimer = 0.0f;
     private float SHOT_INTERVAL = 0.2f;
     private int shotCount = 0;
+    private Vector2 firstPosition = new Vector2(0.0f, -4.05f);
 
     public void Initialize()
     {
@@ -49,9 +51,11 @@ public class BallManager : MonoBehaviour
         shotCount++;
     }
 
+    // ボールの生成
     private BallData CreateBall()
     {
         GameObject ballObject = Instantiate(ballPrefab);
+        ballObject.transform.position = firstPosition;
         ballObject.transform.SetParent(ballRoot.transform);
         BallData ballData = new BallData
         {
@@ -91,6 +95,54 @@ public class BallManager : MonoBehaviour
             ballData.BallObject.SetActive(false);
             ballData.IsMoving = false;
             ballData.IsGather = false;
+        }
+    }
+
+    public void OnHitCollision(
+        Func<Vector2, float, Vector2, Vector2> edgeCollision,
+        Func<Vector2, float, Vector2, Vector2, Vector2> boxCollision,
+        Action<BlockData> otherHitAction,
+        Func<List<BlockData>> blockDataList)
+    {
+        for (int i = 0; i < ballDataList.Count; i++)
+        {
+            BallData ballData = ballDataList[i];
+
+            if (!ballData.IsMoving) continue;
+            Vector2 result = edgeCollision(ballData.BallObject.transform.position, ballData.Radius, Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height)));
+
+            if (result != Vector2.zero)
+            {
+                ballData.Velocity = Vector2.Reflect(ballData.Velocity, result);
+                continue;
+            }
+
+            List<BlockData> blockList = blockDataList();
+
+            for (int j = 0; j < blockList.Count; j++)
+            {
+                BlockData blockData = blockList[j];
+
+                if (blockData.IsBreak) continue;
+                result = boxCollision(ballData.BallObject.transform.position, ballData.Radius, blockData.BlockObject.transform.position, blockData.Size);
+
+                if (result == Vector2.zero) continue;
+                ballData.Velocity = Vector2.Reflect(ballData.Velocity, result);
+                otherHitAction(blockData);
+            }
+        }
+    }
+
+    // 壁との当たり判定
+    public void CheckHitEdge(Func<Vector2, float, Vector2, Vector2> edgeCollision)
+    {
+        for (int i = 0; i < ballDataList.Count; i++)
+        {
+            BallData ballData = ballDataList[i];
+            if (!ballData.IsMoving) continue;
+            Vector2 result = edgeCollision(ballData.BallObject.transform.position, ballData.Radius, Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height)));
+            if (result == Vector2.zero) continue;
+            ballData.Velocity = Vector2.Reflect(ballData.Velocity, result);
         }
     }
 }

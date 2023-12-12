@@ -7,6 +7,8 @@ public class Main : MonoBehaviour
     [SerializeField] private BallManager ballManager;
     [SerializeField] private BlockManager blockManager;
 
+    private CollisionManager collisionManager = new CollisionManager();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -19,5 +21,7 @@ public class Main : MonoBehaviour
     {
         ballManager.OnUpdate();
         blockManager.OnUpdate();
+
+        ballManager.OnHitCollision(collisionManager.CheckHitEdge, collisionManager.CircleToBox, blockManager.OnHitBlock, blockManager.GetBlockDataList);
     }
 }
